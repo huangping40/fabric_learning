@@ -4,3 +4,4 @@ scc的ledger是如何同步的 ？
 The application then coordinates the invitation of the participating Peers to the new channel 
 via a Configuration Transaction that targets the Configuration System Chaincode.
 ？“”？？
+from：https://docs.google.com/document/d/1R5RtIBMW9fZpli37E5Li5_Q9ve3BnQ4q3gWmGZj6Sv4/edit#
