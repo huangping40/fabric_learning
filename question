@@ -1,0 +1,6 @@
+scc的ledger是如何同步的 ？
+
+2： sdk文档：
+The application then coordinates the invitation of the participating Peers to the new channel 
+via a Configuration Transaction that targets the Configuration System Chaincode.
+？“”？？
