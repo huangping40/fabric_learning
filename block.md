@@ -1,3 +1,4 @@
+
 https://blockchain-fabric.blogspot.com/2017/04/hyperledger-fabric-v10-block-structure.html 描述了block的结构
 
 ![block picture]( https://i.imgur.com/TkLG3W7.png)
@@ -8,7 +9,6 @@ message Block {
     BlockData data = 2;
     BlockMetadata metadata = 3;
 }
-
 message BlockHeader {
     uint64 number = 1; // The position in the blockchain  从0开始， genesis block
     bytes previous_hash = 2; // The hash of the previous block header, genesis block 对应的值是nil， 对应的是前面一个blockheader的sha256，而不是block的sha256
@@ -19,6 +19,7 @@ message BlockHeader {
 message BlockData {
     repeated bytes data = 1;  --》 Envelope
 }
+
 
 
 **********************************************
@@ -149,8 +150,5 @@ enum HeaderType {
     DELIVER_SEEK_INFO = 5;         // Used as the type for Envelope messages submitted to instruct the Deliver API to seek
     CHAINCODE_PACKAGE = 6;         // Used for packaging chaincode artifacts for install
 }
-
-
-
 
 
