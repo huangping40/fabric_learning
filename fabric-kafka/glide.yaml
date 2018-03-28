@@ -1,0 +1,4 @@
+package: github.com/huangping40/fabric_learning/fabric-kafka
+import:
+- package: github.com/Shopify/sarama
+  version: ^1.16.0
