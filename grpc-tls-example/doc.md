@@ -1,0 +1,1 @@
+1: tls client, server 端可以使用不同的ca证书，只要有途径获取到ca.crt就可以了。
