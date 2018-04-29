@@ -1,11 +1,10 @@
 package ginkgo_example_test
 
 import (
-	. "github.com/huangping40/fabric_learning/ginkgo_example"
-
+	"fmt"
 	"testing"
 
-	"fmt"
+	. "github.com/huangping40/fabric_learning/ginkgo_example"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

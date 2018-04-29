@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cfed2667-c8c7-409b-a06c-a287ca85a56a" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/counterfeiter-example/myspace_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/counterfeiter-example/test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ginkgo_example/book.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/counterfeiter-example/myspace_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ginkgo_example/book_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/ginkgo_example/book_test.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,74 +15,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/golevel-example/main.go">
+      <file leaf-file-name="counterfeiter_examplefakes_test.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/counterfeiter_examplefakes_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="45" selection-start-line="45" selection-end-line="45" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/counterfeiter-example/test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="37" column="23" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="myspace_test.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/counterfeiter-example/myspace_test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="170">
+              <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
               <folding>
-                <element signature="e#31#110#0" expanded="true" />
+                <element signature="e#40#180#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="g1_suite_test.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ginkgo_example/g1/g1_suite_test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="12" selection-end-column="1" />
-              <folding>
-                <element signature="e#17#95#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="book_test.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="book_test.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ginkgo_example/book_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="43">
-              <caret line="51" column="14" lean-forward="true" selection-start-line="51" selection-start-column="14" selection-end-line="51" selection-end-column="14" />
-              <folding>
-                <element signature="e#29#167#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ginkgo_dsl.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../onsi/ginkgo/ginkgo_dsl.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="337" column="5" selection-start-line="337" selection-start-column="5" selection-end-line="337" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="book.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ginkgo_example/book.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="13" column="1" lean-forward="true" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+            <state relative-caret-position="76">
+              <caret line="8" column="30" lean-forward="true" selection-start-line="8" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -93,18 +41,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="95">
               <caret line="9" column="27" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fake_peer_ledger_provider.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/fake_peer_ledger_provider.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="69" column="78" selection-start-line="69" selection-start-column="61" selection-end-line="69" selection-end-column="78" />
-              <folding>
-                <element signature="e#84#189#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -140,10 +76,11 @@
         <option value="$PROJECT_DIR$/golevel-example/join_test.go" />
         <option value="$PROJECT_DIR$/golevel-example/main.go" />
         <option value="$PROJECT_DIR$/counterfeiter-example/test.go" />
-        <option value="$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/myspace_test.go" />
-        <option value="$PROJECT_DIR$/counterfeiter-example/myspace_test.go" />
         <option value="$PROJECT_DIR$/ginkgo_example/book.go" />
         <option value="$PROJECT_DIR$/ginkgo_example/book_test.go" />
+        <option value="$PROJECT_DIR$/counterfeiter-example/myspace_test.go" />
+        <option value="$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/myspace_test.go" />
+        <option value="$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/counterfeiter_examplefakes_test.go" />
       </list>
     </option>
   </component>
@@ -167,12 +104,24 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="fabric_learning" type="b2602c69:ProjectViewProjectNode" />
               <item name="fabric_learning" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabric_learning" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabric_learning" type="462c0819:PsiDirectoryNode" />
+              <item name="counterfeiter-example" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabric_learning" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabric_learning" type="462c0819:PsiDirectoryNode" />
+              <item name="counterfeiter-example" type="462c0819:PsiDirectoryNode" />
+              <item name="counterfeiter-examplefakes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="fabric_learning" type="b2602c69:ProjectViewProjectNode" />
@@ -189,7 +138,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -197,12 +145,13 @@
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../grpc/grpc-go" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes" />
       <recent name="$PROJECT_DIR$/counterfeiter-example" />
     </key>
   </component>
@@ -275,19 +224,20 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="-4" width="1301" height="772" extended-state="6" />
+    <frame x="64" y="-11" width="1303" height="780" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23828435" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25019857" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32903227" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32903227" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.7032258" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2629032" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.48548388" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.2629032" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Graph Database" order="3" />
@@ -301,24 +251,24 @@
     <layout-to-restore>
       <window_info anchor="right" id="Graph Database" order="3" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32903227" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23828435" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Graph Database Console" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.2629032" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.4887097" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -344,17 +294,10 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/grpc-tls-example/helloworld/greeter_server/main.go">
+    <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/fake_my_special_interface.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="34" column="17" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/aboutcryptocert/printCertFromWebsite.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        <state relative-caret-position="1140">
+          <caret line="60" column="24" selection-start-line="60" selection-start-column="9" selection-end-line="60" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -362,9 +305,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="17" column="13" selection-end-line="40" selection-end-column="1" />
-          <folding>
-            <element signature="e#14#121#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -422,9 +362,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="17" column="13" selection-end-line="40" selection-end-column="1" />
-          <folding>
-            <element signature="e#14#121#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -454,9 +391,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
           <caret line="19" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#14#121#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -481,9 +415,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="19" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#14#121#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -508,9 +439,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="17" column="13" selection-end-line="40" selection-end-column="1" />
-          <folding>
-            <element signature="e#14#121#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -587,52 +515,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/golevel-example/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
+        <state relative-caret-position="741">
           <caret line="45" selection-start-line="45" selection-end-line="45" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/fake_peer_ledger_provider.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
+        <state relative-caret-position="1235">
           <caret line="69" column="78" selection-start-line="69" selection-start-column="61" selection-end-line="69" selection-end-column="78" />
-          <folding>
-            <element signature="e#84#189#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/counterfeiter-example/test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
+        <state relative-caret-position="703">
           <caret line="37" column="23" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/fake_my_special_interface.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="9" column="27" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/counterfeiter-example/myspace_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
-          <folding>
-            <element signature="e#31#110#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ginkgo_example/g1/g1_suite_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="12" selection-end-column="1" />
-          <folding>
-            <element signature="e#17#95#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="57">
+          <caret line="8" selection-start-line="8" selection-end-line="12" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -653,23 +558,38 @@
     <entry file="file://$PROJECT_DIR$/ginkgo_example/book.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
-          <caret line="13" column="1" lean-forward="true" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../onsi/ginkgo/ginkgo_dsl.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
+        <state relative-caret-position="6042">
           <caret line="337" column="5" selection-start-line="337" selection-start-column="5" selection-end-line="337" selection-end-column="5" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/myspace_test.go" />
     <entry file="file://$PROJECT_DIR$/ginkgo_example/book_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="43">
-          <caret line="51" column="14" lean-forward="true" selection-start-line="51" selection-start-column="14" selection-end-line="51" selection-end-column="14" />
+        <state relative-caret-position="76">
+          <caret line="8" column="30" lean-forward="true" selection-start-line="8" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/fake_my_special_interface.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="9" column="27" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/counterfeiter-example/counterfeiter-examplefakes/counterfeiter_examplefakes_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
           <folding>
-            <element signature="e#29#167#0" expanded="true" />
+            <element signature="e#40#180#0" expanded="true" />
           </folding>
         </state>
       </provider>
