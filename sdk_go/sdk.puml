@@ -1,0 +1,49 @@
+@startuml
+namespace fabric_sdk_go\\pkg\\fabsdk {
+ class FabricSDK {
+  opts options
+  provider *context.Provider
+  cryptoSuite core.CryptoSuite
+}
+}
+namespace fabric_sdk_go\\pkg\\fabsdk {
+ class options {
+  Core sdkApi.CoreProviderFactory
+  MSP sdkApi.MSPProviderFactory
+  Service sdkApi.ServiceProviderFactory
+  Logger api.LoggerProvider
+  CryptoSuiteConfig core.CryptoSuiteConfig
+  endpointConfig fab.EndpointConfig
+  IdentityConfig msp.IdentityConfig
+  ConfigBackend []core.ConfigBackend
+}
+}
+namespace fabric_sdk_go\\pkg\\context {
+ class Provider {
+  cryptoSuiteConfig core.CryptoSuiteConfig
+  endpointConfig fab.EndpointConfig
+  identityConfig msp.IdentityConfig
+  userStore msp.UserStore
+  cryptoSuite core.CryptoSuite
+  localDiscoveryProvider fab.LocalDiscoveryProvider
+  signingManager core.SigningManager
+  idMgmtProvider msp.IdentityManagerProvider
+  infraProvider fab.InfraProvider
+  channelProvider fab.ChannelProvider
+}
+}
+namespace fabric_sdk_go\\pkg\\common\\providers\\core {
+ interface CryptoSuite  {
+  KeyGen(opts KeyGenOpts)(k Key,err error)
+  KeyImport(raw interface  { },opts KeyImportOpts)(k Key,err error)
+  GetKey(ski []byte)(k Key,err error)
+  Hash(msg []byte,opts HashOpts)(hash []byte,err error)
+  GetHash(opts HashOpts)(h hash.Hash,err error)
+  Sign(k Key,digest []byte,opts SignerOpts)(signature []byte,err error)
+  Verify(k Key,signature,digest []byte,opts SignerOpts)(valid bool,err error)
+}
+}
+fabric_sdk_go\\pkg\\fabsdk.FabricSDK ---> fabric_sdk_go\\pkg\\fabsdk.options : opts
+fabric_sdk_go\\pkg\\fabsdk.FabricSDK ---> fabric_sdk_go\\pkg\\context.Provider : provider
+fabric_sdk_go\\pkg\\fabsdk.FabricSDK ---> fabric_sdk_go\\pkg\\common\\providers\\core.CryptoSuite : cryptoSuite
+@enduml
