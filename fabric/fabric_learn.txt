@@ -1,0 +1,42 @@
+
+gossip/api/        done
+Total lines:  247
+
+gossip/comm/
+Total lines:  3027
+
+gossip/common/  done
+Total lines:  100
+
+gossip/discovery/
+Total lines:  2611
+
+gossip/election/
+Total lines:  1395
+
+gossip/filter/
+Total lines:  194
+
+gossip/gossip/
+Total lines:  10345
+
+gossip/identity/
+Total lines:  625
+
+gossip/integration/
+Total lines:  196
+
+gossip/mocks/
+Total lines:  26
+
+gossip/privdata/
+Total lines:  5804
+
+gossip/service/
+Total lines:  1898
+
+gossip/state/
+Total lines:  2918
+
+gossip/util/   done
+Total lines:  894
