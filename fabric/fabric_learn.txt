@@ -1,26 +1,54 @@
+------------------------------------------------------
+https://docs.google.com/document/d/157AvKxVRqgeaCTSpN86ICa5x-XihZ67bOrNMc5xLvEU/edit#
+gossip design doc:
+1.5      Authentication and membership management
+Each peer in the gossip network has its own certificate(identity) given by a Membership Service Provider (MSP) from the ones recognized within the blockchain network). It represents itself to other peers by an identifier that is deterministically derived from its certificate (identity). That identifier is called a peer’s PKI-ID. 
+Each message that is gossiped (sent from a peer to a group of peers non-necessarily in a point-to-point manner, meaning- it can be relayed between peers) and asserts something about the peer:
+Must contain the peer’s  PKI-ID
+Must be signed by the peer
+Can be verified given the peer’s certificate.
+Messages that are sent point-to-point between peers and are not gossiped, are not signed because of the assumption that in a production environment, the peer’s TLS layer is activated and takes care of security considerations (prevention of traffic hijacking, replay attacks, etc.)  --> 这句话 没有看懂? 好像懂了
+
+The only message that isn’t signed by a peer and also doesn’t travel point-to-point is a message that contains a ledger block, which is signed by the ordering service.
+
+------------------------------------------------------
+ #format: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+    forma1t: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{longfunc} [%{shortfile}] [%{pid}] [%{callpath:3}] -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+
 
 gossip/api/        done
 Total lines:  247
 
-gossip/comm/
+gossip/comm/      done 20180819
 Total lines:  3027
 
 gossip/common/  done
 Total lines:  100
 
-gossip/discovery/
+gossip/discovery/    done 20180822
 Total lines:  2611
 
-gossip/election/
+gossip/election/   done 20180820
 Total lines:  1395
 
 gossip/filter/
 Total lines:  194
 
+--
 gossip/gossip/
 Total lines:  10345
 
-gossip/identity/
+gossip/gossip/msgstore 571  done 20180820
+--
+
+
+gossip/identity/     20180818
 Total lines:  625
 
 gossip/integration/
@@ -30,7 +58,7 @@ gossip/mocks/
 Total lines:  26
 
 gossip/privdata/
-Total lines:  5804
+Total line:  5804
 
 gossip/service/
 Total lines:  1898
@@ -40,3 +68,84 @@ Total lines:  2918
 
 gossip/util/   done
 Total lines:  894
+------------------------------------------------------
+// InsecureSkipVerify controls whether a client verifies the
+	// server's certificate chain and host name.
+	// If InsecureSkipVerify is true, TLS accepts any certificate
+	// presented by the server and any host name in that certificate.
+	// In this mode, TLS is susceptible to man-in-the-middle attacks.
+	// This should be used only for testing.
+	InsecureSkipVerify bool
+	是否验证服务端的证书
+------------------------------------------------------
+gossip 收到包，通过isAck来 第一次分发 	
+func interceptAcks(nextHandler handler, remotePeerID common.PKIidType, pubSub *util.PubSub) func(*proto.SignedGossipMessage) {
+	return func(m *proto.SignedGossipMessage) {
+		if m.IsAck() {
+			topic := topicForAck(m.Nonce, remotePeerID)
+			pubSub.Publish(topic, m.GetAck())
+			return
+		}
+		nextHandler(m)
+	}
+}
+
+------------------------------------------------------
+func (c *commImpl) authenticateRemotePeer(stream stream, initiator bool) (*proto.ConnectionInfo, error) {
+client,server都会触发这个方法， 都会发送 proto.ConnEstablish{}
+差异是 initiator true/false。
+这个proto.ConnEstablish{}消息的处理 也在方法authenticateRemotePeer里面。
+------------------------------------------------------
+   # Alive check interval(unit: second)
+        aliveTimeInterval: 5s
+# Alive expiration timeout(unit: second)
+        aliveExpirationTimeout: 25s        
+每隔5秒，发送一次 aliMessage
+每隔2.5= aliveExpirationTimeout /10 秒，检查 alive
+
+
+------------------------------------------------------
+discovery  处理三类消息
+	if m.GetAliveMsg() == nil && m.GetMemRes() == nil && m.GetMemReq() == nil {
+		d.logger.Warning("Got message with wrong type (expected Alive or MembershipResponse or MembershipRequest message):", m.GossipMessage)
+		return
+	}
+
+
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+感觉有问题：
+		if _, isKnownAsDead := d.deadLastTS[string(am.Membership.PkiId)]; isKnownAsDead {
+			d.logger.Warning(am.Membership, "has already expired")
+			continue
+		}
+------------------------------------------------------
+modify:
+
+func TestInitPeersStartAtIntervals(t *testing.T) {
+	t.Parallel()
+	// Scenario: Peers are spawned one by one in a slow rate
+	// expected outcome: the first peer is the leader although its ID is lowest  --> highest
+	peers := createPeers(getStartupGracePeriod()+getLeadershipDeclarationInterval(), 3, 2, 1, 0)
+	waitForLeaderElection(t, peers)
+	assert.True(t, peers[0].IsLeader())
+}
+------------------------------------------------------
+if memReq := m.GetMemReq(); memReq != nil { 这个消息没有验证的？
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------

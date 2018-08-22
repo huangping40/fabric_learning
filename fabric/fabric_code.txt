@@ -12,12 +12,130 @@ func IndexInSlice(array interface{}, o interface{}, equals Equals) int {
 ----------------------------------------------
 atomic.Value  保证同步
 ----------------------------------------------
+定时后执行： 好方法
+	expirationTimer = time.AfterFunc(timeToLive, func() {
+			is.delete(pkiID, identity)
+		})
 ----------------------------------------------
+Set 实现：
+
+
+// Set is a generic and thread-safe
+// set container
+type Set struct {
+	items map[interface{}]struct{}
+	lock  *sync.RWMutex
+}
+
+// NewSet returns a new set
+func NewSet() *Set {
+	return &Set{lock: &sync.RWMutex{}, items: make(map[interface{}]struct{})}
+}
+
+// Add adds given item to the set
+func (s *Set) Add(item interface{}) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	s.items[item] = struct{}{}
+}
+
+// Exists returns true whether given item is in the set
+func (s *Set) Exists(item interface{}) bool {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	_, exists := s.items[item]
+	return exists
+}
+
+// Size returns the size of the set
+func (s *Set) Size() int {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	return len(s.items)
+}
+
+// ToArray returns a slice with items
+// at the point in time the method was invoked
+func (s *Set) ToArray() []interface{} {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	a := make([]interface{}, len(s.items))
+	i := 0
+	for item := range s.items {
+		a[i] = item
+		i++
+	}
+	return a
+}
+
+// Clear removes all elements from set
+func (s *Set) Clear() {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	s.items = make(map[interface{}]struct{})
+}
+
+// Remove removes a given item from the set
+func (s *Set) Remove(item interface{}) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	delete(s.items, item)
+}
+
+
+
 ----------------------------------------------
+"github.com/stretchr/testify/mock"
+ 
+ 对mock的截断处理。
+ 
+func (p *peer) Peers() []Peer {
+	p.sharedLock.RLock()
+	defer p.sharedLock.RUnlock()
+
+	if _, isMocked := p.mockedMethods["Peers"]; isMocked {
+		args := p.Called()
+		return args.Get(0).([]Peer)
+	}
+
+	var peers []Peer
+	for id := range p.peers {
+		peers = append(peers, &peer{id: id})
+	}
+	return peers
+}
+
 ----------------------------------------------
+
+type messageStoreImpl struct {
+	pol               common.MessageReplacingPolicy
+	lock              sync.RWMutex
+	messages          []*msg
+	invTrigger        invalidationTrigger
+	msgTTL            time.Duration
+	expiredCount      int
+	externalLock      func()
+	externalUnlock    func()
+	expireMsgCallback func(msg interface{})
+	doneCh            chan struct{}
+	stopOnce          sync.Once  --> 干一次
+}
 ----------------------------------------------
+s.messages = append(s.messages[:i], s.messages[i+1:]...) 去掉一个元素
 ----------------------------------------------
+
+time.Since(m.created) > (s.msgTTL * 2) {  时间对比方法
 ----------------------------------------------
+二个数组放在一起  遍历
+
+	// update the member in any case
+	for _, a := range [][]*proto.SignedGossipMessage{aliveMembers, deadMembers} {
+		for _, m := range a {
+			
+		}
+	}
+	
+	561
 ----------------------------------------------
 ----------------------------------------------
 ----------------------------------------------
