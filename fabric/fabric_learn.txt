@@ -1,3 +1,7 @@
+gerrit usage:
+
+Note for fabric project reverify is not used anymore... you can do "Run XXXXXX" where XXXXXX is the name of the job.  "Run VerifyBuild" will trigger all jobs.
+
 ------------------------------------------------------
 https://docs.google.com/document/d/157AvKxVRqgeaCTSpN86ICa5x-XihZ67bOrNMc5xLvEU/edit#
 gossip design doc:
@@ -45,8 +49,10 @@ gossip/gossip/
 Total lines:  10345
 
 gossip/gossip/msgstore 571  done 20180820
---
-
+gossip/gossip/algo 928  done 20180823
+gossip/gossip/channel 2935
+gossip/gossip/pull 812   done 20180824
+-----
 
 gossip/identity/     20180818
 Total lines:  625
@@ -115,6 +121,7 @@ discovery  处理三类消息
 ------------------------------------------------------
 ------------------------------------------------------
 ------------------------------------------------------
+TestDigestsFilters 可以修改？
 ------------------------------------------------------
 感觉有问题：
 		if _, isKnownAsDead := d.deadLastTS[string(am.Membership.PkiId)]; isKnownAsDead {
@@ -135,8 +142,38 @@ func TestInitPeersStartAtIntervals(t *testing.T) {
 ------------------------------------------------------
 if memReq := m.GetMemReq(); memReq != nil { 这个消息没有验证的？
 ------------------------------------------------------
+gossip： 协议
+
+  根据原论文，两个节点（A、B）之间存在三种通信方式:
+
+    push: A节点将数据(key,value,version)及对应的版本号推送给B节点，B节点更新A中比自己新的数据
+    pull：A仅将数据key,version推送给B，B将本地比A新的数据（Key,value,version）推送给A，A更新本地
+    push/pull：与pull类似，只是多了一步，A再将本地比B新的数据推送给B，B更新本地
+
+https://wenku.baidu.com/view/60d851eee009581b6bd9eba1.html
+
 ------------------------------------------------------
-------------------------------------------------------
+对于 gossip/gossip/algo 外层需要实现 下面5个方法
+type PullAdapter interface {
+	SelectPeers() []string
+	Hello(dest string, nonce uint64)
+	SendDigest(digest []string, nonce uint64, context interface{})
+	SendReq(dest string, items []string, nonce uint64)
+	SendRes(items []string, context interface{}, nonce uint64)
+}
+而 gossip/gossip/pull/恰好实现了上个几个方法。
+gossip/gossip/algo 仅仅保证内容 gossip到各个节点。对于具体内容（context inferface{})不关注。
+
+流程：
+第一：a 机器 触发 Hello 方法，  发送内容是 GossipMessage（定义触发下面的第四步）
+第二：b 机器 触发 HandleMessage， onHello，SendDigest
+第三：a 机器 触发 HandleMessage(触发PullAdapter.IngressDigFilter，过滤掉一些不要的信息)， OnDigest
+
+第四：a 机器 定时触发 SendReq
+第五：b 机器 触发 HandleMessage， OnReq， SendRes
+第六：a 机器 触发 HandleMessage，触发业务消费方法MsgCons，OnRes
+
+
 ------------------------------------------------------
 ------------------------------------------------------
 ------------------------------------------------------

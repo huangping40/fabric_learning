@@ -137,6 +137,19 @@ time.Since(m.created) > (s.msgTTL * 2) {  时间对比方法
 	
 	561
 ----------------------------------------------
+type func 也有定义自己的方法
+// EgressDigestFilter filters digests to be sent to a remote peer, that
+// sent a hello with the following message
+type EgressDigestFilter func(helloMsg proto.ReceivedMessage) func(digestItem string) bool
+
+// byContext converts this EgressDigFilter to an algo.DigestFilter
+func (df EgressDigestFilter) byContext() algo.DigestFilter {
+	return func(context interface{}) func(digestItem string) bool {
+		return func(digestItem string) bool {
+			return df(context.(proto.ReceivedMessage))(digestItem)
+		}
+	}
+}
 ----------------------------------------------
 ----------------------------------------------
 ----------------------------------------------
