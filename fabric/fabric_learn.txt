@@ -50,7 +50,7 @@ Total lines:  10345
 
 gossip/gossip/msgstore 571  done 20180820
 gossip/gossip/algo 928  done 20180823
-gossip/gossip/channel 2935
+gossip/gossip/channel 2935  done 20180901
 gossip/gossip/pull 812   done 20180824
 -----
 
@@ -164,6 +164,7 @@ type PullAdapter interface {
 而 gossip/gossip/pull/恰好实现了上个几个方法。
 gossip/gossip/algo 仅仅保证内容 gossip到各个节点。对于具体内容（context inferface{})不关注。
 
+pull/mediator流程：
 流程：
 第一：a 机器 触发 Hello 方法，  发送内容是 GossipMessage（定义触发下面的第四步）
 第二：b 机器 触发 HandleMessage， onHello，SendDigest
@@ -175,6 +176,59 @@ gossip/gossip/algo 仅仅保证内容 gossip到各个节点。对于具体内容
 
 
 ------------------------------------------------------
+gossip/gossip/channel
+
+        # Determines frequency of pulling state info messages from peers(unit: second)
+        requestStateInfoInterval: 4s
+        # Determines frequency of pushing state info messages to peers(unit: second)
+        publishStateInfoInterval: 4s
+        # Maximum count of blocks stored in memory
+        maxBlockCountToStore: 100
+
+本层定义了 Tag:proto.GossipMessage_CHAN_AND_ORG,
+以dataMsg.Payload.SeqNum作为ID, 也就是 algo层的state(集合)
+adapter.IngressDigFilter 中把过时的消息废弃掉。依据是ledgerHeight,意思是下一个要接受到的block
+
+
+这个方法是： pullengine和mes store的 粘合剂, 也决定着 pullengin 里面放置多少数据的问题。
+	gc.blockMsgStore = msgstore.NewMessageStoreExpirable(comparator, func(m interface{}) {
+		gc.blocksPuller.Remove(seqNumFromMsg(m))
+	}, gc.GetConf().BlockExpirationInterval, nil, nil, func(m interface{}) {
+		gc.blocksPuller.Remove(seqNumFromMsg(m))
+	})
+
+----
+GossipChannel管理的对象：
+
+// Stop stop the channel operations
+func (gc *gossipChannel) Stop() {
+	gc.stopChan <- struct{}{}
+	gc.blocksPuller.Stop()
+	gc.stateInfoPublishScheduler.Stop()
+	gc.stateInfoRequestScheduler.Stop()
+	gc.leaderMsgStore.Stop()
+	gc.stateInfoMsgStore.Stop()
+	gc.blockMsgStore.Stop() --> ttl设置为 invalid， 2*ttl 清空
+}
+blockMsgStore 放置 : ,内存容量100个。
+- type DataMessage struct
+- type IsDataUpdate struct
+
+stateInfoMsgStore 是定时	清空的，依据是 Lookup(PKIID common.PKIidType) *discovery.NetworkMember 是否为空
+
+--
+
+   // Periodically publish state info --> 如果 len(gc.GetMembership()) > 0,就表明自己的状态以及在
+	go gc.periodicalInvocation(gc.publishStateInfo, gc.stateInfoPublishScheduler.C)
+	// Periodically request state info
+	go gc.periodicalInvocation(gc.requestStateInfo, gc.stateInfoRequestScheduler.C)
+	
+--
+以下5个消息 触发业务段方法DeMultiplex。
+
+if m.IsDataMsg() || m.IsStateInfoMsg() {
+if m.IsLeadershipMsg() {
+if res := msg.GetDataUpdate(); res != nil {	
 ------------------------------------------------------
 ------------------------------------------------------
 ------------------------------------------------------
@@ -186,3 +240,68 @@ gossip/gossip/algo 仅仅保证内容 gossip到各个节点。对于具体内容
 ------------------------------------------------------
 ------------------------------------------------------
 ------------------------------------------------------
+
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/bccsp
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/cmd
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/common
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/core
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/devenv
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/discovery
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/docs
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/examples
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/gossip
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/idemix
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/images
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/integration
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/msp
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/orderer
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/peer
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/protos
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/sampleconfig
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/scripts
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/token
+python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/unit-test
+
+
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/bccsp
+Total lines:  13698
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/cmd
+Total lines:  898
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/common
+Total lines:  37541
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/core
+Total lines:  109169
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/devenv
+Total lines:  0
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/discovery
+Total lines:  11850
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/docs
+Total lines:  0
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/examples
+Total lines:  3640
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/gossip
+Total lines:  30331
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/idemix
+Total lines:  2227
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/images
+Total lines:  0
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/integration
+Total lines:  9465
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/msp
+Total lines:  7668
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/orderer
+Total lines:  15591
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/peer
+Total lines:  12993
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/protos
+Total lines:  26690
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/sampleconfig
+Total lines:  0
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/scripts
+Total lines:  0
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/token
+Total lines:  201
+ python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/unit-test
+Total lines:  0
+ 
+
