@@ -151,10 +151,35 @@ func (df EgressDigestFilter) byContext() algo.DigestFilter {
 	}
 }
 ----------------------------------------------
+
+grep -E  '4500]|p0]' gossip  > 4500.log
+
 ----------------------------------------------
+fmt.Println 打印的时候，容易根别的goroutine混合在一起。
+
 ----------------------------------------------
+map  function 
+m := map[string]func(x, y int) int{
+		"A": func(x, y int) int {
+			return x + 2*y
+		},
+		"B": func(x, y int) int {
+			return x + 3*y
+		},
+		"C": func(x, y int) int {
+			return x + 2*y
+		},
+		"D": func(x, y int) int {
+			return x + y
+		},
+	}
 ----------------------------------------------
-----------------------------------------------
+如果没有执行.On().Return(...),而直接运行下面，会panic 
+
+func (g *GossipMock) SuspectPeers(s api.PeerSuspector) {
+	g.Called(s)
+}
+ ----------------------------------------------
 ----------------------------------------------
 ----------------------------------------------
 ----------------------------------------------

@@ -45,7 +45,7 @@ gossip/filter/
 Total lines:  194
 
 --
-gossip/gossip/
+gossip/gossip/   done 20180904
 Total lines:  10345
 
 gossip/gossip/msgstore 571  done 20180820
@@ -64,13 +64,14 @@ gossip/mocks/
 Total lines:  26
 
 gossip/privdata/
-Total line:  5804
+Total line:  6332
 
-gossip/service/
+gossip/service/   done 20180906
 Total lines:  1898
 
-gossip/state/
+gossip/state/     done 20180906
 Total lines:  2918
+剩余2个pvt test case。
 
 gossip/util/   done
 Total lines:  894
@@ -119,6 +120,10 @@ discovery  处理三类消息
 
 
 ------------------------------------------------------
+gossip/service:
+
+gossipServiceInstance 是单例
+
 ------------------------------------------------------
 ------------------------------------------------------
 TestDigestsFilters 可以修改？
@@ -131,14 +136,6 @@ TestDigestsFilters 可以修改？
 ------------------------------------------------------
 modify:
 
-func TestInitPeersStartAtIntervals(t *testing.T) {
-	t.Parallel()
-	// Scenario: Peers are spawned one by one in a slow rate
-	// expected outcome: the first peer is the leader although its ID is lowest  --> highest
-	peers := createPeers(getStartupGracePeriod()+getLeadershipDeclarationInterval(), 3, 2, 1, 0)
-	waitForLeaderElection(t, peers)
-	assert.True(t, peers[0].IsLeader())
-}
 ------------------------------------------------------
 if memReq := m.GetMemReq(); memReq != nil { 这个消息没有验证的？
 ------------------------------------------------------
@@ -230,11 +227,43 @@ if m.IsDataMsg() || m.IsStateInfoMsg() {
 if m.IsLeadershipMsg() {
 if res := msg.GetDataUpdate(); res != nil {	
 ------------------------------------------------------
+identity.Mapper的实现者：
+gossip/identity 是放置 id，cert关系的地方， 定时(6分钟)清空的。如果有超过1个小时没有用到，也要删除的
+
+------------------------------------------------------
+gossip/discovery/
+1: GetMembership 来源这个信息， 由aliveMembership 提供信息, 内容是 type AliveMessage struct 
 ------------------------------------------------------
 ------------------------------------------------------
+gossip/state:
+
+gossipChan 仅仅接受 我的channel 且 是 datamessage 消息
+commChan 仅仅接受 RemoteStateRequest， RemoteStateResponse，PrivateDataMessage
+
+goroutine 1:
+  goroutine 1.1 从gossipChan接收datamessage，放到PayloadsBuffer
+  goroutine 1.2 commChan接收消息
+
+goroutine 2: deliverPayloads
+	从PayloadsBuffer读取数据，写入到账本
+    
+goroutine 3:antiEntropy
+	每三秒钟定时执行
+	检查自己的height更peers的对比
+	向合适的peer发送RemoteStateRequest消息(最多尝试3次), 触发Send方法
+	处理RemoteStateResponse，把block放到PayloadsBuffer
+
+goroutine 4:processStateRequests
+	处理RemoteStateRequest消息
+	组装RemoteStateResponse消息，response
+	
 ------------------------------------------------------
+gossip/election
+
 ------------------------------------------------------
-------------------------------------------------------
+gossip/service:
+
+TestLeaderYield 这个测试例子，为什么会 take over， 是时间关系 ？
 ------------------------------------------------------
 ------------------------------------------------------
 ------------------------------------------------------
@@ -303,5 +332,60 @@ Total lines:  0
 Total lines:  201
  python count_lines.py --showdetail false --endswith go --path ../../hyperledger/fabric/unit-test
 Total lines:  0
+
+
+
+
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+// Gossip sends a message to other peers to the network
+func (g *gossipServiceImpl) Gossip(msg *proto.GossipMessage) {
+	...
+
+	if g.conf.PropagateIterations == 0 {  --> 为什么还需要 emitter 呢 ？
+		return
+	}
+	g.emitter.Add(&emittedGossipMessage{
+		SignedGossipMessage: sMsg,
+		filter: func(_ common.PKIidType) bool {
+			return true
+		},
+	})
+}
  
+------------------------------------------------------
+TestMembershipConvergence  为什么重新启动的节点也能够加入这个节点呢？ 有时间限制 ？
+------------------------------------------------------
+modify：
+
+// addPayload add new payload into state. It may (or may not) block according to the
+// given parameter. If it gets a block while in blocking mode - it would wait until
+// the block is sent into the payloads buffer.
+// Else - it may drop the block, if the payload buffer is too full.
+func (s *GossipStateProviderImpl) addPayload(payload *proto.Payload, blockingMode bool) error {
+	if payload == nil {
+		return errors.New("Given payload is nil")
+	}
+
+
+	// Add payloads from defMaxBlockDistance + 2 to defMaxBlockDistance * 10  --> + 1
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
 
