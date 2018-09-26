@@ -1,0 +1,215 @@
+export TEST_PKGS=github.com/hyperledger/fabric/core/ledger/kvledger/txmgmt/privacyenabledstate
+Created state database
+
+error handling CouchDB request. Error:not_found,  Status Code:404,  Reason:Database does not exist.
+
+common/ledger/   done  0911 
+Total lines:  7553
+ 
+core/ledger/cceventmgmt/   done  0912
+Total lines:  563
+
+core/ledger/confighistory/  done  0912
+Total lines:  507
+
+core/ledger/ledgerconfig/   done  0912
+Total lines:  400
+
+core/ledger/ledgermgmt/   done  0912
+Total lines:  346
+
+core/ledger/ledgerstorage/  done  0912
+Total lines:  672
+
+core/ledger/pvtdatapolicy/  done  0913
+Total lines:  227
+
+core/ledger/pvtdatastorage/  quick gone
+Total lines:  1893
+
+core/ledger/util/             read and passing quickly 0914
+Total lines:  4386
+
+
+core/ledger    0926 done....
+Total lines:  30154
+
+-----
+core/ledger/kvledger/
+Total lines:  19221 
+
+core/ledger/kvledger/txmgmt/pvtstatepurgemgmt/   half done
+Total lines:  1224
+
+core/ledger/kvledger/txmgmt/queryutil/   done 0918
+Total lines:  629
+
+core/ledger/kvledger/txmgmt/rwsetutil/    done 0918
+Total lines:  1755
+
+core/ledger/kvledger/txmgmt/statedb/     done 0917
+Total lines:  3809
+
+core/ledger/kvledger/txmgmt/txmgr/  done 0925
+Total lines:  2630
+
+core/ledger/kvledger/txmgmt/validator/
+Total lines:  2858
+
+/core/common/privdata/   half done
+Total lines:  800
+
+ ----
+ 
+  ----------------0918 game is over
+ -------------------------------------------------------------------
+ newBlockfileMgr:
+   index有重新建立功能
+   
+   blockfileMgr.retrieveBlockByNumber(math.MaxUint64) --> 表示最后一个block
+   ram ledger signal chan struct{} 使用比较奇特。
+   
+   特点：the block before  genesis
+   preGenesis := &cb.Block{
+		Header: &cb.BlockHeader{
+			Number: ^uint64(0),
+		},
+	}  
+	
+	json ledger:  read is singleton.
+	signal 每次是新的。
+	json seqnum =0 ,所以没有打印
+	it.Next() will block.
+	
+	fileledger: 奇怪，为什么只有一个呢 ？ 
+	AttrsToIndex: []blkstorage.IndexableAttr{blkstorage.IndexableAttrBlockNum}},
+	
+	&ab.SeekSpecified{Number: 1}} 从 1 开始5
+ -------------------------------------------------------------------
+这个设计有学问
+ func encodeCompositeKey(ns, key string, blockNum uint64) []byte {
+	b := []byte(keyPrefix + ns)
+	b = append(b, separatorByte)
+	b = append(b, []byte(key)...)
+	return append(b, encodeBlockNum(blockNum)...)
+}
+
+func encodeBlockNum(blockNum uint64) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, math.MaxUint64-blockNum)
+	return b
+}
+ -------------------------------------------------------------------
+ 
+// GetMaxDegreeQueryReadsHashing return the maximum degree of the merkle tree for hashes of
+// of range query results for phantom item validation
+// For more details - see description in kvledger/txmgmt/rwset/query_results_helper.go
+func GetMaxDegreeQueryReadsHashing() uint32 {
+	return 50
+}
+?????
+
+ -------------------------------------------------------------------
+ pvtdatastorage:
+ 有没有可能一个block里面部分pvt，对于本地节点是有效的，部分没有内？  应该不可能ba
+ s.performPurgeIfScheduled(committingBlockNum) 删除光光 ？ 过滤是什么 ？
+ -------------------------------------------------------------------
+ return provider.dbProvider.GetDBHandle(fmt.Sprintf(ledgerID+"/%d", cat))
+ 不仅仅是dbname
+ -------------------------------------------------------------------
+ TestHistoryWithKeyContainingNilBytes 没有看出解决方法在什么地方？
+ 
+ leveldb supports any bytes for the key while the couchdb supports only valid utf-8 string 差别？
+ -------------------------------------------------------------------
+ state level db 有两种编码法方式。
+ -------------------------------------------------------------------
+ 
+	dbBatch.Put(savePointKey, height.ToBytes())  --> 为什么没有 ns 的限制呢 ？
+	错，是有 dbname的限制的
+ -------------------------------------------------------------------
+ // BytesKeySuppoted implements method in VersionedDB interface
+func (vdb *versionedDB) BytesKeySuppoted() bool {
+	return true
+}  
+
+leveldb, couchdb 的差异
+ -------------------------------------------------------------------
+ couchdb commitUpdates  atomci 如何保证 ？
+ -------------------------------------------------------------------
+ 
+func validateKey(key string) error {
+	if !utf8.ValidString(key) {
+		return errors.Errorf("invalid key [%x], must be a UTF-8 string", key)
+	}
+	if strings.HasPrefix(key, "_") {
+		return errors.Errorf("invalid key [%s], cannot begin with \"_\"", key)
+	}
+	return nil
+
+couchdb的  key 限制
+ -------------------------------------------------------------------
+ NewTxSimulator 中 GetState 是从db 里面获取的。
+ -------------------------------------------------------------------
+系统单例
+type collConfigCache map[collConfigkey]bool
+
+type collConfigkey struct {
+	ns, coll string
+}
+ -------------------------------------------------------------------
+ GetPrivateDataRangeScanIterator 仅仅支持只读操作
+ -------------------------------------------------------------------
+ 
+// GetTransactionByID retrieves a transaction by id
+func (l *kvLedger) GetTransactionByID(txID string) (*peer.ProcessedTransaction, error) {
+	tranEnv, err := l.blockStore.RetrieveTxByID(txID)
+	if err != nil {
+		return nil, err
+	}
+	txVResult, err := l.blockStore.RetrieveTxValidationCodeByTxID(txID)
+	if err != nil {
+		return nil, err
+	}
+	processedTran := &peer.ProcessedTransaction{TransactionEnvelope: tranEnv, ValidationCode: int32(txVResult)}
+	l.blockAPIsRWLock.RLock()   --->
+	l.blockAPIsRWLock.RUnlock() ---> why ???
+	return processedTran, nil
+}
+ -------------------------------------------------------------------
+ -------------------------------------------------------------------
+ -------------------------------------------------------------------
+ 
+// 继续
+// TestQueryOnLevelDB tests queries on levelDB.
+func TestQueryOnLevelDB(t *testing.T) {
+ -------------------------------------------------------------------
+ -------------------------------------------------------------------
+ modify:
+ -------------------------------------------------------------------
+
+func sampleKvRwSet() *kvrwset.KVRWSet {
+	rqi1 := &kvrwset.RangeQueryInfo{StartKey: "k0", EndKey: "k9", ItrExhausted: true}
+	rqi1.SetRawReads([]*kvrwset.KVRead{
+		{Key: "k1", Version: &kvrwset.Version{BlockNum: 1, TxNum: 1}},
+		{Key: "k2", Version: &kvrwset.Version{BlockNum: 1, TxNum: 2}},
+	})
+
+	rqi2 := &kvrwset.RangeQueryInfo{StartKey: "k00", EndKey: "k90", ItrExhausted: true}                       ----> useless
+	rqi2.SetMerkelSummary(&kvrwset.QueryReadsMerkleSummary{MaxDegree: 5, MaxLevel: 4, MaxLevelHashes: [][]byte{[]byte("Hash-1"), []byte("Hash-2")}})    --> useless
+	return &kvrwset.KVRWSet{
+		Reads:            []*kvrwset.KVRead{{Key: "key1", Version: &kvrwset.Version{BlockNum: 1, TxNum: 1}}},
+		RangeQueriesInfo: []*kvrwset.RangeQueryInfo{rqi1},
+		Writes:           []*kvrwset.KVWrite{{Key: "key2", IsDelete: false, Value: []byte("value2")}},
+	}
+}
+ 
+ 
+-------------------------------------------------------------------
+privously --》 previously
+simulaiton -》 simulation
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+  
+ 

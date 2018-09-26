@@ -1,0 +1,38 @@
+couchdb:
+
+1:Document updates (add, edit, delete)  保证原子性
+2：存储数据文件是完整的，没有断电坏文件一说
+3：Document updates (add, edit, delete) are serialized, except for binary 
+   blobs which are written concurrently. 性能有问题 ?
+4:Database readers are never locked out and never have to wait on writers 
+  or other readers.  --> mvcc
+5:B-trees
+6:Documents have the advantage of data being already conveniently packaged ,不是分散
+7：Compaction 对使用是透明的   
+
+8: CouchDB replication uses the same REST API all clients use.
+
+
+Master-master replication
+Master-slave replication
+------------
+ Fallacies of Distributed Computing:
+
+    The network is reliable.
+    Latency is zero.
+    Bandwidth is infinite.
+    The network is secure.
+    Topology doesn’t change.
+    There is one administrator.
+    Transport cost is zero.
+    The network is homogeneous.
+    
+cap:
+ca: rdbms
+cp:paxos,raft,mongodb,redis
+ap:CouchDB、Cassandra
+
+--------------
+实现：
+At the heart of CouchDB is a powerful B-tree storage engine.
+对于一棵m阶B-tree，每个结点至多可以拥有m个子结点。
