@@ -1,0 +1,108 @@
+bolt 是 single-level, zero-copy, B+tree data store.
+读快，没有 recovery一说。
+
+All keys in a bucket must be unique
+0长度的value的key 和 不存在key 是二个不同的概念
+It's important to note that you can have a zero-length value set to a key which is different than the key not existing.
+
+关键点：value有效时间
+Please note that values returned from Get() are only valid while the transaction is open. If you need to use a value outside of the transaction then you must use copy() to copy it to another byte slice
+---------------------------------
+问题： ？？
+During iteration, if the key is non-nil but the value is nil, that means the key refers to a bucket rather than a value. Use Bucket.Bucket() to access the sub-bucket.
+
+明白了，是nested buckets. 
+goleveldb  没有 bucket的概念
+
+Bolt 是文件
+---------------------------------
+The biggest difference for users is that LevelDB doesn’t have transactions. 
+---------------------------------
+i) Little-Endian就是低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。（X86 CPU系列采用的位序）
+ii) Big-Endian就是高位字节排放在内存的低地址端，低位字节排放在内存的高地址端。
+iii) 网络字节序：TCP/IP各层协议将字节序定义为Big-Endian，因此TCP/IP协议中使用的字节序通常称之为网络字节序。
+------------------------------------------------
+https://www.cnblogs.com/huxiao-tee/p/4660352.html  mmap 的描述
+------------------------------------------------
+
+mmap 的例子：
+huangping@me:/proc/3925/map_files$ ll
+总用量 0
+dr-x------ 2 huangping huangping  0 10月  1 17:09 ./
+dr-xr-xr-x 9 huangping huangping  0 10月  1 17:09 ../
+lr-------- 1 huangping huangping 64 10月  1 17:09 400000-4aa000 -> /gp/src/github.com/ping40/fabric_learning/etcd/bbolt/test*
+lr-------- 1 huangping huangping 64 10月  1 17:09 4aa000-582000 -> /gp/src/github.com/ping40/fabric_learning/etcd/bbolt/test*
+lr-------- 1 huangping huangping 64 10月  1 17:09 582000-596000 -> /gp/src/github.com/ping40/fabric_learning/etcd/bbolt/test*
+lrw------- 1 huangping huangping 64 10月  1 17:09 7f7ebe5f4000-7f7ebe5fc000 -> /tmp/bolt.db
+
+------------------------------------------------
+
+https://www.jianshu.com/p/b86a69892990
+
+。B+Tree与B-Tree的一个显著区别便是如此，即B+Tree中只有叶子节点存储实际的K/V对，内节点实际上只用于索引，
+并且兄弟节点之间会形成有序链表，以加快查找过程；而B-Tree中的K/V是分布在所有节点上的。
+我们先来分别看看branchPageElement和leafPageElement的定义：
+
+作者：oceanken
+链接：https://www.jianshu.com/p/65980834ce88
+來源：简书
+简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
+
+
+
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+------------------------------------------------
+
+1： ssd 更好
+2： Try to avoid long running read transactions. Bolt uses copy-on-write so old pages cannot be reclaimed while an old transaction is using them.
+3： Be careful when using Bucket.FillPercent. Setting a high fill percent for buckets that have random inserts will cause your database to have very poor page utilization.  --> 50%  default
+4:  Use larger buckets in general. Smaller buckets causes poor page utilization once they become larger than the page size (typically 4KB).
+    --> 如何实现 ？
+    
+ // default page size for db is set to the OS page size.
+ var defaultPageSize = os.Getpagesize()
+
+5： Bolt uses a memory-mapped file so the underlying operating system handles the caching of the data. Typically, the OS will cache as much of the file as it can in memory and will release memory as needed to other processes. This means that Bolt can show very high memory usage when working with large databases. However, this is expected and the OS will release memory as needed. Bolt can handle databases much larger than the available physical RAM, provided its memory-map fits in the process virtual address space. It may be problematic on 32-bits systems.
+
+为什么etcd 内存这么大
+
+6： 
+The data structures in the Bolt database are memory mapped so the data file will be endian specific. This means that you cannot copy a Bolt file from a little endian machine to a big endian machine and have it work. For most users this is not a concern since most modern CPUs are little endian.
+
+一个坑
+
+7： Because of the way pages are laid out on disk, Bolt cannot truncate data files and return free pages back to the disk. Instead, Bolt maintains a free list of unused pages within its data file. These free pages can be reused by later transactions. This works well for many use cases as databases generally tend to grow. However, it's important to note that deleting large chunks of data will not allow you to reclaim that space on disk.
+
+
+---------------------------------
+AllocSize : 16M
+
+
+---------------------------------
+---------------------------------
+https://www.progville.com/go/bolt-embedded-db-golang/
+
+Differences between LevelDB and BoltDB
+LevelDB, started by Google, while also being a key-value ordered database, is quite different from BoltDB. The biggest difference for users is that LevelDB doesn’t have transactions. Internally, they are also very different: LevelDB implements a log-structured merge tree (LSM tree). It stores sorted keys and values in many files split by “levels” and periodically merges smaller files up the level into larger ones in a separate compaction thread. (You can read more about it here.) This makes it very fast for random writes (especially on spinning disks), but slower for reads. This also makes LevelDB performance unpredictable: it may be initially good when the database is small, but much worse when it grows. Separate compaction thread is known to cause problems on servers (that’s why there are many LevelDB forks from companies such as Facebook and Basho, which try improve server performance of LevelDB, mostly by improving compaction). LevelDB is written in C++, but there are Go wrappers (jmhodges/levigo) and pure Go re-implementations of it (syndtr/goleveldb, leveldb-go).
+
+Bolt uses a single memory-mapped file, implementing a copy-on-write B+tree, which makes reads very fast. Also, Bolt’s load time is better, especially during recovery from crash, since it doesn’t need to read the log (it doesn’t have it) to find the last succeeded transaction: it just reads IDs for two B+tree roots, and uses the one with the greater ID. Bolt is simpler.
+---------------------------------
+The Lightning Memory-Mapped Database (LMDB)
+ (LMDB) is a software library that provides a high-performance embedded transactional database in the form of a key-value store. 
+ LMDB is written in C with API bindings for several programming languages.
+ 
+ LMDB may also be used concurrently in a multi-threaded or multi-processing environment, with read performance scaling linearly
+ by design. LMDB databases may have only one writer at a time, however unlike many similar key-value databases, 
+ write transactions do not block readers, nor do readers block writers. LMDB is also unusual in that multiple applications 
+ on the same system may simultaneously open and use the same LMDB store, as a means to scale up performance. Also, 
+ LMDB does not require a transaction log (thereby increasing write performance by not needing to write data twice) 
+ because it maintains data integrity inherently by design. 
+ 

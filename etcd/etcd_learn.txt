@@ -1,0 +1,230 @@
+-----------------------------------
+/raft/storage  556 done 1008
+/raft/log_unstablee  520 done 1008
+/raft/log raftLog  1180 done 1008 testing is partly.
+
+10.30 finish wal ,including  test case.
+-----------------------------------
+raft.prs 仅仅 lead 有效 ？ promotable() ?
+
+-----------------------------------
+
+type MessageType int32
+
+const (
+	MsgHup            MessageType = 0   本地消息  -->  触发 MsgVote, MsgPreVote
+	MsgBeat           MessageType = 1   本地消息  -->  触发 MsgHeartbeat 发送
+	MsgProp           MessageType = 2   本地消息  -->  触发 MsgApp 发送
+	MsgApp            MessageType = 3  F
+	MsgAppResp        MessageType = 4
+	MsgVote           MessageType = 5
+	MsgVoteResp       MessageType = 6
+	MsgSnap           MessageType = 7  F
+	MsgHeartbeat      MessageType = 8  F
+	MsgHeartbeatResp  MessageType = 9
+	MsgUnreachable    MessageType = 10
+	MsgSnapStatus     MessageType = 11
+	MsgCheckQuorum    MessageType = 12   本地消息
+	MsgTransferLeader MessageType = 13   本地消息  F
+	MsgTimeoutNow     MessageType = 14  F
+	MsgReadIndex      MessageType = 15   本地消息  F  触发 MsgHeartbeat
+	MsgReadIndexResp  MessageType = 16  F  
+	MsgPreVote        MessageType = 17
+	MsgPreVoteResp    MessageType = 18
+)
+stepFollower:  处理8个消息， 针对上面的F
+	case pb.MsgProp:
+	case pb.MsgApp:
+	case pb.MsgHeartbeat:
+	case pb.MsgSnap:
+	case pb.MsgTransferLeader:
+	case pb.MsgTimeoutNow:
+	case pb.MsgReadIndex:
+	case pb.MsgReadIndexResp:
+
+stepLeader:  处理9个消息， 
+	
+	case pb.MsgBeat:
+	case pb.MsgCheckQuorum:
+	case pb.MsgProp:   重复
+	case pb.MsgReadIndex:   重复
+	case pb.MsgAppResp:
+	case pb.MsgHeartbeatResp:
+	case pb.MsgSnapStatus:
+	case pb.MsgUnreachable:
+	case pb.MsgTransferLeader:  重复
+
+stepCandidate:  处理7个消息，其中5个是stepFollower的子集
+	case pb.MsgProp:
+	case pb.MsgApp:
+	case pb.MsgHeartbeat:
+	case pb.MsgSnap:
+	case pb.MsgTimeoutNow:
+	MsgPreVoteResp，
+	MsgVoteResp
+
+公共处理三个：pb.MsgHup,pb.MsgVote, pb.MsgPreVote
+-----------------------------------
+Entry  有二个type：
+const (
+	EntryNormal     EntryType = 0
+	EntryConfChange EntryType = 1
+)
+
+ConfChange 有四种类型：
+const (
+	ConfChangeAddNode        ConfChangeType = 0
+	ConfChangeRemoveNode     ConfChangeType = 1
+	ConfChangeUpdateNode     ConfChangeType = 2
+	ConfChangeAddLearnerNode ConfChangeType = 3
+)
+-----------------------------------
+export ETCDCTL_API=3
+etcdctl --write-out=table --endpoints=localhost:2379 member list
+-----------------------------------
+export ETCDCTL_API=3
+etcdctl --write-out=table --endpoints=localhost:2379 member list
+-----------------------------------
+ curl -L http://127.0.0.1:2379/v2/stats/self
+{"name":"infra1","id":"8211f1d0f64f3269","state":"StateLeader",
+	"startTime":"2018-10-10T21:59:57.698750153+08:00",
+	"leaderInfo":{"leader":"8211f1d0f64f3269",
+				  "uptime":"34.070967712s",
+				  "startTime":"2018-10-10T22:00:27.699854728+08:00"
+				 },
+	"recvAppendRequestCnt":0,
+	"sendAppendRequestCnt":10
+}
+-----------------------------------
+etcdctl  put key myvalue
+-----------------------------------
+Term:1 为什么没有出现 ？
+-----------------------------------
+
+
+读过程：
+https://hk.saowen.com/a/3789e7d671b60d60e92d5081f8b1a2ec44e28f909085b8df85909d3b603dac16
+-----------------------------------
+操作管理流程
+https://alexstocks.github.io/html/etcd.html
+-----------------------------------
+node 4个状态
+// StateType represents the role of a node in a cluster.
+type StateType uint64
+
+var stmap = [...]string{
+	"StateFollower",
+	"StateCandidate",
+	"StateLeader",
+	"StatePreCandidate",
+}
+-----------------------------------
+raftLog：  firstIndex():
+1：u.snapshot.Metadata.Index + 1 如果 if u.snapshot != nil , 或者
+2： MemoryStorage ms.ents[0].Index + 1
+-----------------------------------
+func (l *raftLog) lastIndex():
+
+1: func (u *unstable) maybeLastIndex() (uint64, bool) {
+	if l := len(u.entries); l != 0 {
+		return u.offset + uint64(l) - 1, true  --》 第一个优先级
+	}
+	if u.snapshot != nil {
+		return u.snapshot.Metadata.Index, true 第二个优先级
+	}
+	return 0, false
+}
+或者：
+-----------------------------------
+readIndex 什么情况下  advance 有 超过 1个情况？ 难道上层数据压缩 ？ 网络不稳定？ 
+-----------------------------------
+-----------------------------------
+-----------------------------------
+-----------------------------------
+// sendHeartbeat sends an empty MsgApp
+func (r *raft) sendHeartbeat(to uint64, ctx []byte) {
+-----------------------------------
+-----------------------------------
+In Search of an Understandable Consensus Algorithm:
+
+If a leader crashes be-
+fore committing an entry, future leaders will attempt to
+finish replicating the entry.  给 client 错误的信息 ？
+-----------------------------------
+TestDisruptiveFollower 表明 网络慢的情况下，follow触发  election, 然后 网络通过了， election真正开始。
+但是 pre-vote phase prevents this isolated node   可以 防止。
+-----------------------------------
+-----------------------------------
+modify:
+
+
+
+		t.Errorf("g = %+v,\n             w   %+v", g, want)
+
+-----------------------------------
+Node 不接受本地消息
+
+test.helper()...
+ioutils.Discard
+-----------------------------------
+
+PageWriter:
+write 方法，如果内部内存能够放下，就先放到内部内存里面。以页的方式 写入磁盘，如果保证 事务性？
+-----------------------------------
+
+wal 文件 record 有五种：
+metadataType int64 = iota + 1
+	entryType
+	stateType
+	crcType
+	snapshotType
+-----------------------------------
+x86 是小端序
+大端序: 地址增长方向,  最高位字节是0x0A 存储在最低的内存地址处。
+
+网络传输一般采用大端序，也被称之为网络字节序，或网络序
+-----------------------------------
+
+结构化 了解
+
+-----------------------------------
+在现代工业中，工厂的先进重要性里，人的因素在下降，而设备的因素在上升
+-----------------------------------
+so// BTree结构，写不是并发安全的，但是读是并发安全的.
+// 树中每个结点至多有2*degree个孩子.
+// 除根结点和叶子结点外，其它每个结点至少有degree个孩子.
+// 若根结点不是叶子结点，则至少有2个孩子.
+// 所有叶子结点都出现在同一层.
+
+-----------------------------------
+-----------------------------------
+-----------------------------------
+-----------------------------------
+-----------------------------------
+-----------------------------------
+-----------------------------------
+面有 很多类似：StringSlice，Float64Slice 的  类型。
+filepath.Base 取文件名称
+
+
+	Parent *node `json:"-"` // should not encode this field! avoid circular dependency.
+
+
+
+-----------------------------------
+google btree:
+http://www.cnblogs.com/adarking/adarking/p/9633319.html
+
+
+-----------------------------------
+线段树：
+-----------------------------------
+-----------------------------------
+
+	if len(endKey) == 0 {
+		if bytes.Equal(key, bb.buf[idx].key) {  ---> 应该增加 else ？ endkey 空表示仅仅获取一个
+			keys = append(keys, bb.buf[idx].key)
+			vals = append(vals, bb.buf[idx].val)
+		}
+		return keys, vals
+	}
